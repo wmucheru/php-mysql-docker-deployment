@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  web: 
+    container_name: php-test-web
+    image: nginx:1.16.1
+    restart: always
+    ports:
+      - "4000:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - php-fpm
+      - php-db
+
+  php-fpm:
+    container_name: php-test-fpm
+    image: php:8-fpm
+    restart: always
+    environment:
+      - GREETING=hello
+    volumes:
+      - ./app:/var/www/html
+
+  php-db:
+    container_name: php-test-db
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - ./db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=testdb
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    ports:
+      - "3306:3306"
